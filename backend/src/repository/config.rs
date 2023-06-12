@@ -4,13 +4,13 @@ use config::ConfigError;
 pub struct ServerConfig {
     pub server_host: String,
     pub server_port: u16,
-    pub pg: deadpool_postgres::Config,
+    pub database_url: String,
 }
 
 impl ServerConfig {
     pub fn from_env() -> Result<Self, ConfigError> {
         config::Config::builder()
-            .add_source(config::Environment::default().separator("__"))
+            .add_source(config::Environment::default())
             .build()?
             .try_deserialize()
     }

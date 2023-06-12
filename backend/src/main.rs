@@ -1,14 +1,10 @@
-mod config;
-mod db;
-mod errors;
 mod models;
+mod repository;
 
-use actix_web::{get, post, web::Data, App, HttpResponse, HttpServer, Responder};
-use deadpool_postgres::Runtime;
+use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 use dotenv::dotenv;
-use tokio_postgres::NoTls;
 
-use crate::config::ServerConfig;
+use crate::repository::config::ServerConfig;
 
 #[get("/")]
 async fn hello() -> impl Responder {
@@ -25,19 +21,26 @@ async fn mark(req_body: String) -> impl Responder {
     HttpResponse::Ok().body(req_body)
 }
 
+async fn not_found() -> impl Responder {
+    HttpResponse::NotFound().body("Response not found")
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
     let config = ServerConfig::from_env().unwrap();
 
-    let pool = config.pg.create_pool(Some(Runtime::Tokio1), NoTls).unwrap();
+    let db = repository::db::Database::new(config.database_url);
+    let app_data = web::Data::new(db);
 
     let server = HttpServer::new(move || {
         App::new()
-            .app_data(Data::new(pool.clone()))
+            .app_data(app_data.clone())
             .service(hello)
             .service(grade)
             .service(mark)
+            .default_service(web::route().to(not_found))
+            .wrap(actix_web::middleware::Logger::default())
     })
     .bind((config.server_host.clone(), config.server_port))?
     .run();
