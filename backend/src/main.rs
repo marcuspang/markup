@@ -42,13 +42,13 @@ async fn main() -> std::io::Result<()> {
             .default_service(web::route().to(not_found))
             .wrap(actix_web::middleware::Logger::default())
     })
-    .bind((config.server_host.clone(), config.server_port))?
+    .bind((config.SERVER_HOST.clone(), config.SERVER_PORT))?
     .run();
 
     println!(
         "Server running at {}:{}",
-        config.server_host.clone(),
-        config.server_port
+        config.SERVER_HOST.clone(),
+        config.SERVER_PORT
     );
 
     server.await
