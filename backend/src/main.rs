@@ -1,25 +1,11 @@
+mod api;
 mod models;
 mod repository;
 
-use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{web, App, HttpResponse, HttpServer, Responder};
 use dotenv::dotenv;
 
-use crate::repository::config::ServerConfig;
-
-#[get("/")]
-async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("Server running")
-}
-
-#[post("/grade")]
-async fn grade(req_body: String) -> impl Responder {
-    HttpResponse::Ok().body(req_body)
-}
-
-#[post("/mark")]
-async fn mark(req_body: String) -> impl Responder {
-    HttpResponse::Ok().body(req_body)
-}
+use crate::{api::api::create_api_config, repository::config::ServerConfig};
 
 async fn not_found() -> impl Responder {
     HttpResponse::NotFound().body("Response not found")
@@ -36,19 +22,17 @@ async fn main() -> std::io::Result<()> {
     let server = HttpServer::new(move || {
         App::new()
             .app_data(app_data.clone())
-            .service(hello)
-            .service(grade)
-            .service(mark)
+            .configure(create_api_config)
             .default_service(web::route().to(not_found))
             .wrap(actix_web::middleware::Logger::default())
     })
-    .bind((config.SERVER_HOST.clone(), config.SERVER_PORT))?
+    .bind((config.server_host.clone(), config.server_port))?
     .run();
 
     println!(
         "Server running at {}:{}",
-        config.SERVER_HOST.clone(),
-        config.SERVER_PORT
+        config.server_host.clone(),
+        config.server_port
     );
 
     server.await
