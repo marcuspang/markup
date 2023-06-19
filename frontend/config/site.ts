@@ -6,12 +6,12 @@ export const siteConfig = {
     "Beautifully designed components built with Radix UI and Tailwind CSS.",
   mainNav: [
     {
-      title: "Grading",
-      href: "/grade",
-    },
-    {
       title: "Generate",
       href: "/generate",
+    },
+    {
+      title: "Grading",
+      href: "/grade",
     },
     {
       title: "Question Gallery",
