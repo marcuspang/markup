@@ -1,4 +1,4 @@
-export type SiteConfig = typeof siteConfig
+export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
   name: "Next.js",
@@ -9,10 +9,21 @@ export const siteConfig = {
       title: "Home",
       href: "/",
     },
+    {
+      title: "Grading",
+      href: "/grade",
+    },
+    {
+      title: "Generate",
+      href: "/generate",
+    },
+    {
+      title: "Question Gallery",
+      href: "/gallery",
+    },
   ],
   links: {
-    twitter: "https://twitter.com/shadcn",
-    github: "https://github.com/shadcn/ui",
+    github: "https://github.com/marcuspang/markup",
     docs: "https://ui.shadcn.com",
   },
-}
+};
